@@ -9,12 +9,12 @@ body{
     font-family:Arial, Helvetica, sans-serif;
     text-align:center;
     min-height:100vh;
-    padding:20px;
+    overflow:hidden;
 }
 
 h1{
     color:#145a32;
-    margin-bottom:10px;
+    margin:10px 0;
 }
 
 p{
@@ -24,11 +24,11 @@ p{
 
 #score{
     color:#2c3e50;
-    margin-bottom:15px;
+    margin-bottom:10px;
 }
 
 canvas{
-    background:#ecf0f1;
+    display:block;
     border:4px solid #2c3e50;
     border-radius:10px;
     box-shadow:0 0 15px rgba(0,0,0,0.2);
