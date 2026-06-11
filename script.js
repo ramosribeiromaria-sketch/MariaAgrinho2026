@@ -1,96 +1,74 @@
-const story = document.getElementById("story");
-const choices = document.getElementById("choices");
-const startBtn = document.getElementById("startBtn");
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const infoDiv = document.getElementById('info');
 
-let score = 0;
-let currentScene = 0;
-
-const scenes = [
-  {
-    text:"Uma escola da cidade quer conhecer de onde vêm os alimentos. O que você sugere?",
-    answers:[
-      { text:"Organizar uma visita a uma propriedade rural.", points:10 },
-      { text:"Pesquisar somente pela internet.", points:5 },
-      { text:"Não fazer nenhuma atividade.", points:0 }
-    ]
-  },
-  {
-    text:"A comunidade rural está desperdiçando água na irrigação. Qual solução escolher?",
-    answers:[
-      { text:"Instalar irrigação por gotejamento.", points:10 },
-      { text:"Usar mais água para garantir.", points:0 },
-      { text:"Ignorar o problema.", points:0 }
-    ]
-  },
-  {
-    text:"Feira local tem pouco movimento. Como aproximar produtores e consumidores?",
-    answers:[
-      { text:"Criar feira sustentável com produtos locais.", points:10 },
-      { text:"Aumentar preços.", points:0 },
-      { text:"Cancelar a feira.", points:0 }
-    ]
-  },
-  {
-    text:"Muitos resíduos estão sendo descartados incorretamente. O que fazer?",
-    answers:[
-      { text:"Implantar coleta seletiva e educação ambiental.", points:10 },
-      { text:"Queimar os resíduos.", points:0 },
-      { text:"Jogar em terreno vazio.", points:0 }
-    ]
-  }
+const plants = [
+  { name: "Tomate", x: 150, y: 200, width: 80, height: 80 },
+  { name: "Milho", x: 350, y: 200, width: 80, height: 80 },
+  { name: "Alface", x: 550, y: 200, width: 80, height: 80 },
 ];
 
-startBtn.addEventListener("click", startGame);
+const pests = [
+  { name: "Lagarta", hint: "Come folhas e deixa buracos" },
+  { name: "Pulgão", hint: "Pequeno e suga a seiva" },
+  { name: "Mosca-branca", hint: "Voa ao mexer a planta" }
+];
 
-function startGame() {
-  startBtn.style.display = "none";
-  loadScene();
-}
+let currentPest = null;
+let selectedTool = null;
 
-function loadScene() {
-  if(currentScene >= scenes.length){
-    finishGame();
-    return;
-  }
-
-  const scene = scenes[currentScene];
-
-  story.textContent = scene.text;
-  choices.innerHTML = "";
-
-  scene.answers.forEach(answer => {
-    const btn = document.createElement("button");
-    btn.classList.add("choice");
-    btn.textContent = answer.text;
-    btn.onclick = () => {
-      score += answer.points;
-      currentScene++;
-      loadScene();
-    };
-    choices.appendChild(btn);
+function drawPlants() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  plants.forEach(plant => {
+    ctx.fillStyle = "#4caf50";
+    ctx.fillRect(plant.x, plant.y, plant.width, plant.height);
+    ctx.fillStyle = "#000";
+    ctx.font = "16px Arial";
+    ctx.fillText(plant.name, plant.x + 10, plant.y + plant.height + 20);
   });
 }
 
-function finishGame() {
-  choices.innerHTML = "";
+function randomPest() {
+  const plant = plants[Math.floor(Math.random() * plants.length)];
+  const pest = pests[Math.floor(Math.random() * pests.length)];
+  currentPest = { plant, pest };
+  infoDiv.textContent = `Detecte a praga na planta: ${plant.name}`;
+}
 
-  if(score >= 35){
-    story.innerHTML = "🏆 FINAL OURO<br>Você fortaleceu a conexão entre campo e cidade e criou uma comunidade sustentável.";
-  } else if(score >= 20){
-    story.innerHTML = "🥈 FINAL PRATA<br>Você ajudou a comunidade, mas ainda existem desafios a resolver.";
-  } else {
-    story.innerHTML = "🥉 FINAL BRONZE<br>A comunidade precisa de mais ações sustentáveis para prosperar.";
+canvas.addEventListener('click', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+
+  if (!selectedTool) {
+    infoDiv.textContent = "Escolha uma ferramenta primeiro!";
+    return;
   }
 
-  // Mostrar botão de reiniciar
-  const restartBtn = document.createElement("button");
-  restartBtn.textContent = "Jogar Novamente";
-  restartBtn.id = "startBtn";
-  restartBtn.onclick = () => {
-    score = 0;
-    currentScene = 0;
-    startBtn.style.display = "none";
-    loadScene();
-  };
-  choices.appendChild(restartBtn);
-}
+  const plant = plants.find(p =>
+    x > p.x && x < p.x + p.width &&
+    y > p.y && y < p.y + p.height
+  );
+
+  if (plant) {
+    if (plant === currentPest.plant) {
+      infoDiv.textContent = `✅ Você detectou: ${currentPest.pest.name}. Dica: ${currentPest.pest.hint}`;
+      setTimeout(randomPest, 2000);
+    } else {
+      infoDiv.textContent = "❌ Esta planta não tem praga!";
+    }
+  }
+});
+
+document.getElementById('magnifier').addEventListener('click', () => {
+  selectedTool = "lupa";
+  infoDiv.textContent = "Ferramenta selecionada: Lupa 🔍";
+});
+
+document.getElementById('sensor').addEventListener('click', () => {
+  selectedTool = "sensor";
+  infoDiv.textContent = "Ferramenta selecionada: Sensor Térmico 🌡️";
+});
+
+drawPlants();
+randomPest();
