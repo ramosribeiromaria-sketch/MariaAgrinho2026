@@ -1,74 +1,268 @@
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const infoDiv = document.getElementById('info');
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+const scoreElement = document.getElementById("score");
+
+let score = 0;
+let draggingPlant = null;
 
 const plants = [
-  { name: "Tomate", x: 150, y: 200, width: 80, height: 80 },
-  { name: "Milho", x: 350, y: 200, width: 80, height: 80 },
-  { name: "Alface", x: 550, y: 200, width: 80, height: 80 },
+    "Milho",
+    "Soja",
+    "Trigo",
+    "Feijão",
+    "Tomate",
+    "Alface",
+    "Batata",
+    "Café",
+    "Algodão",
+    "Cana",
+    "Morango",
+    "Uva",
+    "Cenoura",
+    "Couve",
+    "Pimentão"
 ];
 
-const pests = [
-  { name: "Lagarta", hint: "Come folhas e deixa buracos" },
-  { name: "Pulgão", hint: "Pequeno e suga a seiva" },
-  { name: "Mosca-branca", hint: "Voa ao mexer a planta" }
+const diseases = [
+    {
+        name: "Saudável",
+        color: "#2ecc71",
+        destination: "Viveiro"
+    },
+    {
+        name: "Fungo",
+        color: "#8e44ad",
+        destination: "Laboratório"
+    },
+    {
+        name: "Pulgões",
+        color: "#e74c3c",
+        destination: "Controle Biológico"
+    },
+    {
+        name: "Lagartas",
+        color: "#d35400",
+        destination: "Manejo Integrado"
+    },
+    {
+        name: "Deficiência Nutricional",
+        color: "#f1c40f",
+        destination: "Adubação"
+    },
+    {
+        name: "Virose",
+        color: "#34495e",
+        destination: "Quarentena"
+    }
 ];
 
-let currentPest = null;
-let selectedTool = null;
+const sectors = [
+    {
+        name: "Viveiro",
+        x: 650,
+        y: 30,
+        color: "#2ecc71"
+    },
+    {
+        name: "Laboratório",
+        x: 650,
+        y: 120,
+        color: "#8e44ad"
+    },
+    {
+        name: "Controle Biológico",
+        x: 650,
+        y: 210,
+        color: "#e74c3c"
+    },
+    {
+        name: "Manejo Integrado",
+        x: 650,
+        y: 300,
+        color: "#d35400"
+    },
+    {
+        name: "Adubação",
+        x: 650,
+        y: 390,
+        color: "#f1c40f"
+    },
+    {
+        name: "Quarentena",
+        x: 650,
+        y: 480,
+        color: "#34495e"
+    }
+];
+
+let currentPlants = [];
+
+function createPlant() {
+
+    const disease =
+        diseases[Math.floor(Math.random() * diseases.length)];
+
+    return {
+        plant: plants[Math.floor(Math.random() * plants.length)],
+        disease: disease,
+        x: 30 + Math.random() * 500,
+        y: 30 + Math.random() * 500,
+        width: 130,
+        height: 50
+    };
+}
+
+function spawnPlants() {
+
+    currentPlants = [];
+
+    for(let i = 0; i < 6; i++) {
+        currentPlants.push(createPlant());
+    }
+}
+
+function drawSectors() {
+
+    sectors.forEach(sector => {
+
+        ctx.fillStyle = sector.color;
+
+        ctx.fillRect(
+            sector.x,
+            sector.y,
+            220,
+            70
+        );
+
+        ctx.fillStyle = "white";
+        ctx.font = "bold 16px Arial";
+
+        ctx.fillText(
+            sector.name,
+            sector.x + 10,
+            sector.y + 40
+        );
+    });
+}
 
 function drawPlants() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  plants.forEach(plant => {
-    ctx.fillStyle = "#4caf50";
-    ctx.fillRect(plant.x, plant.y, plant.width, plant.height);
-    ctx.fillStyle = "#000";
-    ctx.font = "16px Arial";
-    ctx.fillText(plant.name, plant.x + 10, plant.y + plant.height + 20);
-  });
+
+    currentPlants.forEach(plant => {
+
+        ctx.fillStyle = plant.disease.color;
+
+        ctx.fillRect(
+            plant.x,
+            plant.y,
+            plant.width,
+            plant.height
+        );
+
+        ctx.fillStyle = "white";
+        ctx.font = "14px Arial";
+
+        ctx.fillText(
+            plant.plant,
+            plant.x + 8,
+            plant.y + 18
+        );
+
+        ctx.fillText(
+            plant.disease.name,
+            plant.x + 8,
+            plant.y + 38
+        );
+    });
 }
 
-function randomPest() {
-  const plant = plants[Math.floor(Math.random() * plants.length)];
-  const pest = pests[Math.floor(Math.random() * pests.length)];
-  currentPest = { plant, pest };
-  infoDiv.textContent = `Detecte a praga na planta: ${plant.name}`;
+function draw() {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    drawSectors();
+    drawPlants();
+
+    requestAnimationFrame(draw);
 }
 
-canvas.addEventListener('click', (e) => {
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
+canvas.addEventListener("mousedown", e => {
 
-  if (!selectedTool) {
-    infoDiv.textContent = "Escolha uma ferramenta primeiro!";
-    return;
-  }
+    const rect = canvas.getBoundingClientRect();
 
-  const plant = plants.find(p =>
-    x > p.x && x < p.x + p.width &&
-    y > p.y && y < p.y + p.height
-  );
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
 
-  if (plant) {
-    if (plant === currentPest.plant) {
-      infoDiv.textContent = `✅ Você detectou: ${currentPest.pest.name}. Dica: ${currentPest.pest.hint}`;
-      setTimeout(randomPest, 2000);
-    } else {
-      infoDiv.textContent = "❌ Esta planta não tem praga!";
-    }
-  }
+    currentPlants.forEach(plant => {
+
+        if(
+            mouseX > plant.x &&
+            mouseX < plant.x + plant.width &&
+            mouseY > plant.y &&
+            mouseY < plant.y + plant.height
+        ){
+            draggingPlant = plant;
+        }
+    });
 });
 
-document.getElementById('magnifier').addEventListener('click', () => {
-  selectedTool = "lupa";
-  infoDiv.textContent = "Ferramenta selecionada: Lupa 🔍";
+canvas.addEventListener("mousemove", e => {
+
+    if(!draggingPlant) return;
+
+    const rect = canvas.getBoundingClientRect();
+
+    draggingPlant.x =
+        e.clientX - rect.left - draggingPlant.width / 2;
+
+    draggingPlant.y =
+        e.clientY - rect.top - draggingPlant.height / 2;
 });
 
-document.getElementById('sensor').addEventListener('click', () => {
-  selectedTool = "sensor";
-  infoDiv.textContent = "Ferramenta selecionada: Sensor Térmico 🌡️";
+canvas.addEventListener("mouseup", () => {
+
+    if(!draggingPlant) return;
+
+    sectors.forEach(sector => {
+
+        if(
+            draggingPlant.x > sector.x &&
+            draggingPlant.x < sector.x + 220 &&
+            draggingPlant.y > sector.y &&
+            draggingPlant.y < sector.y + 70
+        ){
+
+            if(
+                draggingPlant.disease.destination ===
+                sector.name
+            ){
+
+                score += 10;
+
+                currentPlants =
+                    currentPlants.filter(
+                        p => p !== draggingPlant
+                    );
+
+                currentPlants.push(createPlant());
+
+            }else{
+
+                score -= 5;
+            }
+
+            scoreElement.textContent =
+                `Pontuação: ${score}`;
+        }
+    });
+
+    draggingPlant = null;
 });
 
-drawPlants();
-randomPest();
+spawnPlants();
+draw();
