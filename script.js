@@ -24,7 +24,7 @@ const diseases = [
     { name: "Virose", color: "#34495e", destination: "Quarentena" }
 ];
 
-// Setores posicionados dinamicamente com base na altura do canvas
+// Setores posicionados dinamicamente
 function generateSectors(){
     const sectorHeight = 70;
     const gap = 20;
@@ -42,7 +42,7 @@ function generateSectors(){
 
 let sectors = generateSectors();
 
-// Gera plantas com posição aleatória
+// Cria plantas
 function createPlant() {
     const disease = diseases[Math.floor(Math.random() * diseases.length)];
     return {
@@ -64,26 +64,64 @@ function spawnPlants(){
     }
 }
 
-// Desenha setores
+// Função para desenhar retângulos arredondados
+function roundRect(x, y, width, height, radius){
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+}
+
+// Desenha setores com cartão arredondado e círculo indicador
 function drawSectors(){
     sectors.forEach(sector=>{
+        ctx.shadowColor = "rgba(0,0,0,0.15)";
+        ctx.shadowBlur = 15;
+        roundRect(sector.x, sector.y, 220, 70, 18);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.beginPath();
+        ctx.arc(sector.x + 25, sector.y + 35, 12, 0, Math.PI*2);
         ctx.fillStyle = sector.color;
-        ctx.fillRect(sector.x, sector.y, 220, 70);
-        ctx.fillStyle="white";
-        ctx.font="bold 16px Arial";
-        ctx.fillText(sector.name, sector.x+10, sector.y+40);
+        ctx.fill();
+
+        ctx.fillStyle = "#2c3e50";
+        ctx.font = "bold 16px Arial";
+        ctx.fillText(sector.name, sector.x + 50, sector.y + 40);
     });
 }
 
-// Desenha plantas
+// Desenha plantas com cartão arredondado e bolinha de doença
 function drawPlants(){
     currentPlants.forEach(plant=>{
+        ctx.shadowColor = "rgba(0,0,0,0.15)";
+        ctx.shadowBlur = 12;
+        roundRect(plant.x, plant.y, plant.width, plant.height, 15);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.beginPath();
+        ctx.arc(plant.x + 18, plant.y + 18, 8, 0, Math.PI*2);
         ctx.fillStyle = plant.disease.color;
-        ctx.fillRect(plant.x, plant.y, plant.width, plant.height);
-        ctx.fillStyle="white";
-        ctx.font="14px Arial";
-        ctx.fillText(plant.plant, plant.x+8, plant.y+18);
-        ctx.fillText(plant.disease.name, plant.x+8, plant.y+38);
+        ctx.fill();
+
+        ctx.fillStyle = "#2c3e50";
+        ctx.font = "bold 14px Arial";
+        ctx.fillText(plant.plant, plant.x + 35, plant.y + 20);
+
+        ctx.fillStyle = "#7f8c8d";
+        ctx.font = "12px Arial";
+        ctx.fillText(plant.disease.name, plant.x + 35, plant.y + 38);
     });
 }
 
@@ -95,7 +133,7 @@ function draw(){
     requestAnimationFrame(draw);
 }
 
-// Arrastar plantas
+// Eventos de arrastar
 canvas.addEventListener("mousedown", e=>{
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
