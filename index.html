@@ -1,50 +1,37 @@
-<!DOCTYPE>
-<html>
-  <!DOCTYPE html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo Agrinho 2026 - Sustentabilidade</title>
-    <style>
-        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #e0f0e0; }
-        canvas { display: block; background: #87CEEB; border-bottom: 50px solid #556B2F; }
-        #ui { position: absolute; top: 20px; left: 20px; color: white; text-shadow: 2px 2px 4px #000; }
-        #msg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-               text-align: center; background: rgba(255,255,255,0.9); padding: 20px; border-radius: 15px; display: none; }
-    </style>
+    <title>Agrinho 2026 - Quiz Educativo</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="ui">
-        <h1>Agrinho 2026: Guardião da Natureza</h1>
-        <p>Pontos: <span id="score">0</span> | Vidas: <span id="lives">3</span></p>
+<div class="container">
+    <h1>🌱 Agrinho 2026 - Quiz Educativo</h1>
+
+    <div id="start-screen">
+        <p>Teste seus conhecimentos sobre sustentabilidade, cidadania e o mundo ao seu redor!</p>
+        <button id="start-btn">Começar</button>
     </div>
 
-    <div id="msg" id="gameOverScreen">
-        <h2 id="statusTitle">Fim de Jogo!</h2>
-        <p id="statusDesc">Você ajudou a preservar o meio ambiente.</p>
-        <button onclick="location.reload()">Jogar Novamente</button>
+    <div id="quiz-screen" class="hidden">
+        <div id="question-container">
+            <p id="question"></p>
+        </div>
+        <div id="answer-buttons">
+            <!-- Botões de resposta serão gerados aqui -->
+        </div>
+        <p id="feedback"></p>
     </div>
 
-    <canvas id="gameCanvas"></canvas>
+    <div id="result-screen" class="hidden">
+        <h2>🎉 Fim do Quiz!</h2>
+        <p>Sua pontuação: <span id="final-score"></span></p>
+        <button id="restart-btn">Jogar Novamente</button>
+    </div>
+</div>
 
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const scoreElement = document.getElementById('score');
-        const livesElement = document.getElementById('lives');
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        // Configurações do Jogo
-        let score = 0;
-        let lives = 3;
-        let gameActive = true;
-
-        const player = {
-            x: 50,
-            y: canvas.height - 130,
-            width: 60,
+<script src="script.js"></script>
+</body>
 </html>
