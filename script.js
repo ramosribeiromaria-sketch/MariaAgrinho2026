@@ -1,104 +1,142 @@
+const story = document.getElementById("story");
+const choices = document.getElementById("choices");
+const startBtn = document.getElementById("startBtn");
 
-const startBtn = document.getElementById("start-btn");
-const restartBtn = document.getElementById("restart-btn");
-const startScreen = document.getElementById("start-screen");
-const quizScreen = document.getElementById("quiz-screen");
-const resultScreen = document.getElementById("result-screen");
-
-const questionElement = document.getElementById("question");
-const answerButtons = document.getElementById("answer-buttons");
-const feedback = document.getElementById("feedback");
-const finalScore = document.getElementById("final-score");
-
-let currentQuestionIndex = 0;
 let score = 0;
+let currentScene = 0;
 
-const questions = [
-    {
-        question: "Qual a importância de plantar árvores?",
-        answers: [
-            { text: "Aumenta a poluição", correct: false },
-            { text: "Ajuda a manter o ar limpo e protege o solo", correct: true },
-            { text: "Não tem efeito algum", correct: false },
-        ]
-    },
-    {
-        question: "Qual prática ajuda a economizar água?",
-        answers: [
-            { text: "Deixar a torneira aberta enquanto escova os dentes", correct: false },
-            { text: "Reutilizar água da chuva e fechar torneiras", correct: true },
-            { text: "Usar água de rio para beber direto", correct: false },
-        ]
-    },
-    {
-        question: "O que é cidadania?",
-        answers: [
-            { text: "Apenas pagar impostos", correct: false },
-            { text: "Participar da sociedade e respeitar regras", correct: true },
-            { text: "Ignorar leis e regras", correct: false },
-        ]
-    },
-    {
-        question: "Qual alimento é considerado saudável?",
-        answers: [
-            { text: "Frutas e verduras", correct: true },
-            { text: "Refrigerantes e doces em excesso", correct: false },
-            { text: "Salgadinhos industrializados", correct: false },
-        ]
-    }
+const scenes = [
+
+{
+text:"Uma escola da cidade quer conhecer de onde vêm os alimentos. O que você sugere?",
+answers:[
+{
+text:"Organizar uma visita a uma propriedade rural.",
+points:10
+},
+{
+text:"Pesquisar somente pela internet.",
+points:5
+},
+{
+text:"Não fazer nenhuma atividade.",
+points:0
+}
+]
+},
+
+{
+text:"A comunidade rural está desperdiçando água na irrigação. Qual solução escolher?",
+answers:[
+{
+text:"Instalar irrigação por gotejamento.",
+points:10
+},
+{
+text:"Usar mais água para garantir.",
+points:0
+},
+{
+text:"Ignorar o problema.",
+points:0
+}
+]
+},
+
+{
+text:"Feira local tem pouco movimento. Como aproximar produtores e consumidores?",
+answers:[
+{
+text:"Criar feira sustentável com produtos locais.",
+points:10
+},
+{
+text:"Aumentar preços.",
+points:0
+},
+{
+text:"Cancelar a feira.",
+points:0
+}
+]
+},
+
+{
+text:"Muitos resíduos estão sendo descartados incorretamente.",
+answers:[
+{
+text:"Implantar coleta seletiva e educação ambiental.",
+points:10
+},
+{
+text:"Queimar os resíduos.",
+points:0
+},
+{
+text:"Jogar em terreno vazio.",
+points:0
+}
+]
+}
 ];
 
 startBtn.addEventListener("click", startGame);
-restartBtn.addEventListener("click", restartGame);
 
-function startGame() {
-    startScreen.classList.add("hidden");
-    quizScreen.classList.remove("hidden");
-    currentQuestionIndex = 0;
-    score = 0;
-    showQuestion();
+function startGame(){
+    startBtn.style.display="none";
+    loadScene();
 }
 
-function restartGame() {
-    resultScreen.classList.add("hidden");
-    startScreen.classList.remove("hidden");
-}
+function loadScene(){
 
-function showQuestion() {
-    feedback.textContent = "";
-    const currentQuestion = questions[currentQuestionIndex];
-    questionElement.textContent = currentQuestion.question;
-    answerButtons.innerHTML = "";
+    if(currentScene >= scenes.length){
+        finishGame();
+        return;
+    }
 
-    currentQuestion.answers.forEach(answer => {
-        const button = document.createElement("button");
-        button.textContent = answer.text;
-        button.addEventListener("click", () => selectAnswer(answer));
-        answerButtons.appendChild(button);
+    const scene = scenes[currentScene];
+
+    story.textContent = scene.text;
+    choices.innerHTML = "";
+
+    scene.answers.forEach(answer=>{
+
+        const btn = document.createElement("button");
+        btn.classList.add("choice");
+        btn.textContent = answer.text;
+
+        btn.onclick = ()=>{
+
+            score += answer.points;
+            currentScene++;
+
+            loadScene();
+        };
+
+        choices.appendChild(btn);
     });
 }
 
-function selectAnswer(answer) {
-    if (answer.correct) {
-        feedback.textContent = "✅ Correto!";
-        score += 10;
-    } else {
-        feedback.textContent = "❌ Errado!";
+function finishGame(){
+
+    choices.innerHTML="";
+
+    if(score >= 35){
+
+        story.innerHTML =
+        "🏆 FINAL OURO<br><br>" +
+        "Você fortaleceu a conexão entre campo e cidade e criou uma comunidade sustentável.";
+
+    }else if(score >= 20){
+
+        story.innerHTML =
+        "🥈 FINAL PRATA<br><br>" +
+        "Você ajudou a comunidade, mas ainda existem desafios a resolver.";
+
+    }else{
+
+        story.innerHTML =
+        "🥉 FINAL BRONZE<br><br>" +
+        "A comunidade precisa de mais ações sustentáveis para prosperar.";
     }
-
-    currentQuestionIndex++;
-
-    setTimeout(() => {
-        if (currentQuestionIndex < questions.length) {
-            showQuestion();
-        } else {
-            showResult();
-        }
-    }, 1000);
-}
-
-function showResult() {
-    quizScreen.classList.add("hidden");
-    resultScreen.classList.remove("hidden");
-    finalScore.textContent = score;
 }
