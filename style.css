@@ -14,11 +14,9 @@ body {
 
 h1 {
     color: #ffffff; 
-    font-size: 2.5rem; /* Aumentado um pouquinho para dar mais impacto na entrada */
+    font-size: 2.5rem;
     text-shadow: 3px 3px 0px #12351e;
     margin: 15px 0 5px 0;
-    
-    /* --- CONFIGURAÇÃO DA ANIMAÇÃO DO TÍTULO --- */
     position: relative;
     animation: entradaTitulo 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
@@ -29,28 +27,53 @@ p {
     color: #ffffff; 
     font-weight: bold;
     text-shadow: 1px 1px 2px #000;
-    
-    /* O texto de instrução também entra deslizando suavemente logo atrás */
     animation: entradaSuave 1.8s ease-out forwards;
 }
 
-/* Container para alinhar o Placar e o Cronômetro */
-.game-info {
+.game-info, .controls {
     display: flex;
     justify-content: center;
-    gap: 30px;
+    gap: 20px;
     margin-bottom: 10px;
     animation: entradaSuave 2s ease-out forwards;
 }
 
-#score, #timer {
+#score, #timer, button {
     background: #ffffff;
-    padding: 5px 15px;
+    padding: 6px 18px;
     border: 3px solid #004d1a;
     border-radius: 10px;
     color: #004d1a;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     box-shadow: 3px 3px 0px #000;
+}
+
+/* Estilo exclusivo dos botões interativos */
+button {
+    font-family: 'Comic Sans MS', sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+button:hover {
+    background-color: #e6f9ed;
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #000;
+}
+
+/* Cor especial para chamar atenção no botão de recomeçar */
+#btnRestart {
+    background-color: #fff3cd;
+    border-color: #856404;
+    color: #856404;
+}
+#btnRestart:hover {
+    background-color: #ffeeba;
 }
 
 canvas {
@@ -62,35 +85,14 @@ canvas {
     animation: entradaSuave 2.2s ease-out forwards;
 }
 
-/* --- ANIMAÇÕES (KEYFRAMES) --- */
-
-/* Faz o título começar grande no centro da tela e depois ir para o topo diminuindo levemente */
 @keyframes entradaTitulo {
-    0% {
-        top: 40vh; /* Começa quase no centro vertical da tela */
-        transform: scale(1.5); /* Começa bem grande em destaque */
-        opacity: 0;
-    }
-    20% {
-        opacity: 1; /* Aparece rápido */
-    }
-    100% {
-        top: 0; /* Sobe para a posição normal dele no topo */
-        transform: scale(1); /* Volta ao tamanho normal */
-    }
+    0% { top: 40vh; transform: scale(1.5); opacity: 0; }
+    20% { opacity: 1; }
+    100% { top: 0; transform: scale(1); }
 }
 
-/* Faz as instruções, placar e canvas aparecerem com um efeito sutil de "fade-in" subindo */
 @keyframes entradaSuave {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    50% {
-        opacity: 0; /* Segura a aparição enquanto o título está no centro */
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(20px); }
+    50% { opacity: 0; }
+    100% { opacity: 1; transform: translateY(0); }
 }
