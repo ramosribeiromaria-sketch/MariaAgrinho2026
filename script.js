@@ -1,10 +1,28 @@
+Aqui está a alteração! O tempo foi reduzido para **30 segundos** para deixar o jogo mais rápido e desafiador.
+
+Basta atualizar a variável no início do seu arquivo **`script.js`**:
+
+### `script.js` (Trecho alterado)
+
+```javascript
+let score = 0;
+let timeLeft = 30; // Tempo reduzido para 30 segundos!
+let draggingPlant = null;
+let gameInterval;
+let isGameOver = false;
+
+```
+
+Se preferir, aqui está o código completo do **`script.js`** com essa alteração aplicada:
+
+```javascript
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const scoreElement = document.getElementById("score");
 const timerElement = document.getElementById("timer");
 
 let score = 0;
-let timeLeft = 60; // Tempo do jogo em segundos
+let timeLeft = 30; // Tempo do jogo alterado para 30 segundos
 let draggingPlant = null;
 let gameInterval;
 let isGameOver = false;
@@ -28,7 +46,7 @@ const diseases = [
     { name: "Virose", destination: "Quarentena" }
 ];
 
-// Setores posicionados dinamicamente (estes mantêm as cores para identificação das frentes)
+// Setores posicionados dinamicamente
 function generateSectors(){
     const sectorHeight = 65;
     const gap = 15;
@@ -53,7 +71,6 @@ function createPlant() {
     return {
         plant: plants[Math.floor(Math.random() * plants.length)],
         disease: disease,
-        // Nasce sempre mais para o lado esquerdo de forma visível
         x: 100 + Math.random() * (canvas.width - 450),
         y: 150 + Math.random() * (canvas.height - 250),
         width: 140,
@@ -68,6 +85,9 @@ function spawnSinglePlant() {
 
 // Sistema do Cronômetro
 function startTimer() {
+    // Atualiza o texto inicial para 30s imediatamente
+    timerElement.textContent = `Tempo: ${timeLeft}s`;
+    
     gameInterval = setInterval(() => {
         if (timeLeft > 0) {
             timeLeft--;
@@ -124,20 +144,18 @@ function drawSectors(){
     });
 }
 
-// Desenha a planta atual SEM a bolinha colorida da doença
+// Desenha a planta atual sem a cor da doença
 function drawPlants(){
     currentPlants.forEach(plant=>{
-        ctx.fillStyle = "#fffdf0"; // Fundo bege neutro igual para todas
+        ctx.fillStyle = "#fffdf0";
         roundRect(plant.x, plant.y, plant.width, plant.height, 12, "#2c3e50");
         ctx.fill();
 
-        // Texto principal da planta (centralizado horizontalmente um pouco mais para a esquerda)
         ctx.fillStyle = "#2c3e50";
         ctx.font = "bold 14px Arial";
         ctx.fillText(plant.plant, plant.x + 20, plant.y + 24);
 
-        // Texto da doença que o aluno deve ler para decifrar o setor correto
-        ctx.fillStyle = "#e74c3c"; // Texto em destaque vermelho/escuro para leitura
+        ctx.fillStyle = "#e74c3c";
         ctx.font = "bold italic 12px Arial";
         ctx.fillText(`Problema: ${plant.disease.name}`, plant.x + 20, plant.y + 42);
     });
@@ -193,11 +211,10 @@ canvas.addEventListener("mouseup", ()=>{
         ){
             if(draggingPlant.disease.destination === sector.name){
                 score += 10;
-                // Acertou: Limpa a tela e faz aparecer uma nova planta imediatamente
                 currentPlants = [];
                 spawnSinglePlant();
             } else {
-                score = Math.max(0, score - 5); // Errou: perde pontos mas a planta continua na tela
+                score = Math.max(0, score - 5);
             }
             scoreElement.textContent = `Pontuação: ${score}`;
         }
@@ -209,3 +226,5 @@ canvas.addEventListener("mouseup", ()=>{
 spawnSinglePlant();
 startTimer();
 draw();
+
+```
