@@ -5,8 +5,8 @@
 }
 
 body {
-    /* Um degradê que lembra céu azul e grama verde, estilo desenho animado */
-    background: linear-gradient(to bottom, #87ceeb 60%, #5cd65c 100%);
+    /* Novo gradiente: vai de um verde floresta mais escuro para um verde broto mais claro */
+    background: linear-gradient(to bottom, #1e5631 0%, #4cbb17 100%);
     font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial', sans-serif;
     text-align: center;
     min-height: 100vh;
@@ -14,17 +14,18 @@ body {
 }
 
 h1 {
-    color: #004d1a;
+    color: #ffffff; /* Mudado para branco para dar destaque e contraste sobre o verde escuro */
     font-size: 2.2rem;
-    text-shadow: 2px 2px 0px #ffffff;
+    text-shadow: 2px 2px 0px #004d1a;
     margin: 15px 0 5px 0;
 }
 
 p {
     margin-bottom: 5px;
     font-size: 18px;
-    color: #333;
+    color: #ffffff; /* Mudado para branco para facilitar a leitura no fundo verde */
     font-weight: bold;
+    text-shadow: 1px 1px 2px #000;
 }
 
 /* Container para alinhar o Placar e o Cronômetro lado a lado */
@@ -48,7 +49,7 @@ p {
 canvas {
     display: block;
     margin: auto;
-    background: rgba(255, 255, 255, 0.3); /* Fundo semi-transparente para o jogo */
+    background: rgba(255, 255, 255, 0.2); /* Fundo semi-transparente para destacar o jogo */
     border: 4px dashed #ffffff;
     border-radius: 20px;
 }
