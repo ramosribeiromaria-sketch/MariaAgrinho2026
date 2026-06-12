@@ -10,7 +10,61 @@ body {
     font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial', sans-serif;
     text-align: center;
     min-height: 100vh;
+    overflow: hidden;*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body {
+    /* Gradiente: vai de um verde floresta mais escuro para um verde broto mais claro */
+    background: linear-gradient(to bottom, #1e5631 0%, #4cbb17 100%);
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial', sans-serif;
+    text-align: center;
+    min-height: 100vh;
     overflow: hidden;
+}
+
+h1 {
+    color: #ffffff; 
+    font-size: 2.2rem;
+    text-shadow: 2px 2px 0px #12351e; /* Sombra sutil ajustada para o novo título */
+    margin: 15px 0 5px 0;
+}
+
+p {
+    margin-bottom: 5px;
+    font-size: 18px;
+    color: #ffffff; 
+    font-weight: bold;
+    text-shadow: 1px 1px 2px #000;
+}
+
+/* Container para alinhar o Placar e o Cronômetro lado a lado */
+.game-info {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 10px;
+}
+
+#score, #timer {
+    background: #ffffff;
+    padding: 5px 15px;
+    border: 3px solid #004d1a;
+    border-radius: 10px;
+    color: #004d1a;
+    font-size: 1.5rem;
+    box-shadow: 3px 3px 0px #000;
+}
+
+canvas {
+    display: block;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.2); 
+    border: 4px dashed #ffffff;
+    border-radius: 20px;
+}
 }
 
 h1 {
