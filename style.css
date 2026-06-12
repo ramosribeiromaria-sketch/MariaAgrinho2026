@@ -5,19 +5,6 @@
 }
 
 body {
-    /* Novo gradiente: vai de um verde floresta mais escuro para um verde broto mais claro */
-    background: linear-gradient(to bottom, #1e5631 0%, #4cbb17 100%);
-    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial', sans-serif;
-    text-align: center;
-    min-height: 100vh;
-    overflow: hidden;*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body {
-    /* Gradiente: vai de um verde floresta mais escuro para um verde broto mais claro */
     background: linear-gradient(to bottom, #1e5631 0%, #4cbb17 100%);
     font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial', sans-serif;
     text-align: center;
@@ -27,9 +14,13 @@ body {
 
 h1 {
     color: #ffffff; 
-    font-size: 2.2rem;
-    text-shadow: 2px 2px 0px #12351e; /* Sombra sutil ajustada para o novo título */
+    font-size: 2.5rem; /* Aumentado um pouquinho para dar mais impacto na entrada */
+    text-shadow: 3px 3px 0px #12351e;
     margin: 15px 0 5px 0;
+    
+    /* --- CONFIGURAÇÃO DA ANIMAÇÃO DO TÍTULO --- */
+    position: relative;
+    animation: entradaTitulo 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 p {
@@ -38,14 +29,18 @@ p {
     color: #ffffff; 
     font-weight: bold;
     text-shadow: 1px 1px 2px #000;
+    
+    /* O texto de instrução também entra deslizando suavemente logo atrás */
+    animation: entradaSuave 1.8s ease-out forwards;
 }
 
-/* Container para alinhar o Placar e o Cronômetro lado a lado */
+/* Container para alinhar o Placar e o Cronômetro */
 .game-info {
     display: flex;
     justify-content: center;
     gap: 30px;
     margin-bottom: 10px;
+    animation: entradaSuave 2s ease-out forwards;
 }
 
 #score, #timer {
@@ -64,46 +59,38 @@ canvas {
     background: rgba(255, 255, 255, 0.2); 
     border: 4px dashed #ffffff;
     border-radius: 20px;
-}
-}
-
-h1 {
-    color: #ffffff; /* Mudado para branco para dar destaque e contraste sobre o verde escuro */
-    font-size: 2.2rem;
-    text-shadow: 2px 2px 0px #004d1a;
-    margin: 15px 0 5px 0;
+    animation: entradaSuave 2.2s ease-out forwards;
 }
 
-p {
-    margin-bottom: 5px;
-    font-size: 18px;
-    color: #ffffff; /* Mudado para branco para facilitar a leitura no fundo verde */
-    font-weight: bold;
-    text-shadow: 1px 1px 2px #000;
+/* --- ANIMAÇÕES (KEYFRAMES) --- */
+
+/* Faz o título começar grande no centro da tela e depois ir para o topo diminuindo levemente */
+@keyframes entradaTitulo {
+    0% {
+        top: 40vh; /* Começa quase no centro vertical da tela */
+        transform: scale(1.5); /* Começa bem grande em destaque */
+        opacity: 0;
+    }
+    20% {
+        opacity: 1; /* Aparece rápido */
+    }
+    100% {
+        top: 0; /* Sobe para a posição normal dele no topo */
+        transform: scale(1); /* Volta ao tamanho normal */
+    }
 }
 
-/* Container para alinhar o Placar e o Cronômetro lado a lado */
-.game-info {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-bottom: 10px;
-}
-
-#score, #timer {
-    background: #ffffff;
-    padding: 5px 15px;
-    border: 3px solid #004d1a;
-    border-radius: 10px;
-    color: #004d1a;
-    font-size: 1.5rem;
-    box-shadow: 3px 3px 0px #000;
-}
-
-canvas {
-    display: block;
-    margin: auto;
-    background: rgba(255, 255, 255, 0.2); /* Fundo semi-transparente para destacar o jogo */
-    border: 4px dashed #ffffff;
-    border-radius: 20px;
+/* Faz as instruções, placar e canvas aparecerem com um efeito sutil de "fade-in" subindo */
+@keyframes entradaSuave {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    50% {
+        opacity: 0; /* Segura a aparição enquanto o título está no centro */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
