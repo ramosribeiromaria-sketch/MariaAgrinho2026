@@ -7,7 +7,6 @@ let score = 0;
 let timeLeft = 60; // Tempo do jogo em segundos
 let draggingPlant = null;
 let gameInterval;
-let spawnInterval;
 let isGameOver = false;
 
 // Ajusta canvas ao tamanho da janela
@@ -21,15 +20,15 @@ resizeCanvas();
 // Plantas e doenças
 const plants = ["Milho","Soja","Trigo","Feijão","Tomate","Alface","Batata","Café","Algodão","Cana","Morango","Uva","Cenoura","Couve","Pimentão"];
 const diseases = [
-    { name: "Saudável", color: "#2ecc71", destination: "Viveiro" },
-    { name: "Fungo", color: "#8e44ad", destination: "Laboratório" },
-    { name: "Pulgões", color: "#e74c3c", destination: "Controle Biológico" },
-    { name: "Lagartas", color: "#d35400", destination: "Manejo Integrado" },
-    { name: "Deficiência Nutricional", color: "#f1c40f", destination: "Adubação" },
-    { name: "Virose", color: "#34495e", destination: "Quarentena" }
+    { name: "Saudável", destination: "Viveiro" },
+    { name: "Fungo", destination: "Laboratório" },
+    { name: "Pulgões", destination: "Controle Biológico" },
+    { name: "Lagartas", destination: "Manejo Integrado" },
+    { name: "Deficiência Nutricional", destination: "Adubação" },
+    { name: "Virose", destination: "Quarentena" }
 ];
 
-// Setores posicionados dinamicamente
+// Setores posicionados dinamicamente (estes mantêm as cores para identificação das frentes)
 function generateSectors(){
     const sectorHeight = 65;
     const gap = 15;
@@ -48,32 +47,23 @@ function generateSectors(){
 let sectors = generateSectors();
 let currentPlants = [];
 
-// Cria uma única planta em posição aleatória
+// Cria uma única planta centralizada para o jogador resolver
 function createPlant() {
     const disease = diseases[Math.floor(Math.random() * diseases.length)];
     return {
         plant: plants[Math.floor(Math.random() * plants.length)],
         disease: disease,
-        x: 40 + Math.random() * (canvas.width - 340),
-        y: 40 + Math.random() * (canvas.height - 100),
+        // Nasce sempre mais para o lado esquerdo de forma visível
+        x: 100 + Math.random() * (canvas.width - 450),
+        y: 150 + Math.random() * (canvas.height - 250),
         width: 140,
         height: 55
     };
 }
 
-// Faz as plantas surgirem uma por uma até o limite de 6 na tela
-function startSpawningPlants() {
-    // Adiciona a primeira planta imediatamente
-    if (currentPlants.length < 6) {
-        currentPlants.push(createPlant());
-    }
-    
-    // Configura para brotar uma nova planta a cada 1.5 segundos
-    spawnInterval = setInterval(() => {
-        if (!isGameOver && currentPlants.length < 6) {
-            currentPlants.push(createPlant());
-        }
-    }, 1500);
+// Coloca apenas a primeira planta na tela
+function spawnSinglePlant() {
+    currentPlants = [createPlant()];
 }
 
 // Sistema do Cronômetro
@@ -91,11 +81,10 @@ function startTimer() {
 function endGame() {
     isGameOver = true;
     clearInterval(gameInterval);
-    clearInterval(spawnInterval);
     alert(`Fim de Jogo! Você conseguiu ${score} pontos!`);
 }
 
-// Função para desenhar retângulos arredondados com borda grossa (estilo cartoon)
+// Função para desenhar retângulos arredondados com borda grossa
 function roundRect(x, y, width, height, radius, strokeColor = "#000000"){
     ctx.beginPath();
     ctx.moveTo(x + radius, y);
@@ -114,7 +103,7 @@ function roundRect(x, y, width, height, radius, strokeColor = "#000000"){
     ctx.stroke();
 }
 
-// Desenha setores (estilo cartolina escolar)
+// Desenha setores do lado direito
 function drawSectors(){
     sectors.forEach(sector=>{
         ctx.fillStyle = "#ffffff";
@@ -135,27 +124,22 @@ function drawSectors(){
     });
 }
 
-// Desenha plantas (caixinhas de identificação)
+// Desenha a planta atual SEM a bolinha colorida da doença
 function drawPlants(){
     currentPlants.forEach(plant=>{
-        ctx.fillStyle = "#fffdf0"; // Tom pastel amarelado
+        ctx.fillStyle = "#fffdf0"; // Fundo bege neutro igual para todas
         roundRect(plant.x, plant.y, plant.width, plant.height, 12, "#2c3e50");
         ctx.fill();
 
-        ctx.beginPath();
-        ctx.arc(plant.x + 20, plant.y + 20, 9, 0, Math.PI*2);
-        ctx.fillStyle = plant.disease.color;
-        ctx.fill();
-        ctx.strokeStyle = "#000";
-        ctx.stroke();
-
+        // Texto principal da planta (centralizado horizontalmente um pouco mais para a esquerda)
         ctx.fillStyle = "#2c3e50";
         ctx.font = "bold 14px Arial";
-        ctx.fillText(plant.plant, plant.x + 38, plant.y + 24);
+        ctx.fillText(plant.plant, plant.x + 20, plant.y + 24);
 
-        ctx.fillStyle = "#555";
-        ctx.font = "italic 12px Arial";
-        ctx.fillText(plant.disease.name, plant.x + 38, plant.y + 42);
+        // Texto da doença que o aluno deve ler para decifrar o setor correto
+        ctx.fillStyle = "#e74c3c"; // Texto em destaque vermelho/escuro para leitura
+        ctx.font = "bold italic 12px Arial";
+        ctx.fillText(`Problema: ${plant.disease.name}`, plant.x + 20, plant.y + 42);
     });
 }
 
@@ -166,7 +150,7 @@ function draw(){
     drawPlants();
     
     if (isGameOver) {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "#ffffff";
         ctx.font = "bold 40px Arial";
@@ -177,7 +161,7 @@ function draw(){
     requestAnimationFrame(draw);
 }
 
-// Eventos de arrastar por toque/mouse
+// Eventos de arrastar
 canvas.addEventListener("mousedown", e=>{
     if(isGameOver) return;
     const rect = canvas.getBoundingClientRect();
@@ -199,7 +183,6 @@ canvas.addEventListener("mousemove", e=>{
 
 canvas.addEventListener("mouseup", ()=>{
     if(!draggingPlant || isGameOver) return;
-    let hitSector = false;
     
     sectors.forEach(sector=>{
         if(
@@ -208,12 +191,13 @@ canvas.addEventListener("mouseup", ()=>{
             draggingPlant.y > sector.y - 20 &&
             draggingPlant.y < sector.y + 65
         ){
-            hitSector = true;
             if(draggingPlant.disease.destination === sector.name){
                 score += 10;
-                currentPlants = currentPlants.filter(p => p !== draggingPlant);
+                // Acertou: Limpa a tela e faz aparecer uma nova planta imediatamente
+                currentPlants = [];
+                spawnSinglePlant();
             } else {
-                score = Math.max(0, score - 5); // Não deixa a pontuação ficar negativa
+                score = Math.max(0, score - 5); // Errou: perde pontos mas a planta continua na tela
             }
             scoreElement.textContent = `Pontuação: ${score}`;
         }
@@ -222,6 +206,6 @@ canvas.addEventListener("mouseup", ()=>{
 });
 
 // Inicialização do jogo
-startSpawningPlants();
+spawnSinglePlant();
 startTimer();
 draw();
